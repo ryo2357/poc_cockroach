@@ -9,5 +9,5 @@ RUN cargo build --release
 FROM debian:bookworm-slim AS runner
 
 WORKDIR /app
-COPY --from=builder /app/target/release/template-rust-devcontainer /app/template-rust-devcontainer
-CMD ["/app/template-rust-devcontainer"]
+COPY --from=builder /app/target/release/poc_cockroach /app/poc_cockroach
+CMD ["/app/poc_cockroach"]

@@ -8,8 +8,30 @@ services:
     volumes:
       - ../:/workspace:cached
     command: sleep infinity
-    # network_mode: "host"
     environment:
-      - TZ=Asia/Tokyo
-      - ENV_FROM_DOCKER=env in compose file
+      DATABASE_URL: "postgresql://root@roach1:26257/defaultdb?sslmode=disable"
+      CARGO_TARGET_DIR: "/tmp/target"
+      LANG: ja_JP.utf8
+      LC_CTYPE: ja_JP.utf8
+      DEBIAN_FRONTEND: noninteractive
     env_file: devcontainer.env
+    depends_on:
+      - cockroachdb_1
+    networks:
+      - roachnet
+
+  cockroachdb_1:
+    image: cockroachdb/cockroach:latest
+    container_name: roach1
+    ports:
+      - 26257:26257
+      - 8080:8080
+    networks:
+      - roachnet
+    restart: always
+    command: start-single-node --insecure
+    volumes:
+      - "./tmp/cockroach-data/roach1:/cockroach/cockroach-data"
+networks:
+  roachnet:
+    driver: bridge

@@ -1,6 +1,22 @@
+use diesel::prelude::*;
+
+use poc_cockroach::{
+    models::{self, NewUser, User},
+    schema,
+};
+
 fn main() {
-    let env: String = std::env::var("ENV_FROM_DOCKER")
-        .unwrap_or("Can not find ENV from environment variables".to_string());
-    println!("Hello, world!");
-    println!("ENV_FROM_DOCKER: {}", env);
+    let user = NewUser {
+        name: "hoge".to_owned(),
+    };
+    println!("{:?}", user);
+
+    let conn = &mut models::establish_connection();
+
+    let user = diesel::insert_into(schema::users::table)
+        .values(&user)
+        // .get_result::<User>(&conn);
+        .get_result::<User>(conn);
+
+    println!("{:?}", user);
 }
